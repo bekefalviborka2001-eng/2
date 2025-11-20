@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>WebAR Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <!-- MindAR A-Frame -->
+  <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body { margin:0; overflow:hidden; }
+    #startBtn {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 24px;
+      padding: 10px 18px;
+      font-size: 16px;
+      z-index: 10;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button id="startBtn">Start AR</button>
+
+  <a-scene 
+    mindar-image="imageTargetSrc: assets/targets.mind; maxTrack: 1;"
+    vr-mode-ui="enabled: false"
+    embedded
+    color-space="sRGB"
+    renderer="antialias: true; alpha: true">
+
+    <a-entity camera></a-entity>
+
+    <!-- Anchor for target -->
+    <a-entity mindar-image-target="targetIndex: 0">
+
+      <!-- Video plane -->
+      <a-video 
+        id="arVideo" 
+        src="#videoFile"
+        width="1.2"
+        height="0.9"
+        position="0 0 0.01"
+        rotation="-90 0 0">
+      </a-video>
+
+    </a-entity>
+
+    <!-- Hidden video element -->
+    <video 
+      id="videoFile"
+      src="assets/animation.mp4"
+      loop="true"
+      crossorigin="anonymous"
+      playsinline
+      webkit-playsinline
+      preload="auto"
+      style="display:none">
+    </video>
+
+  </a-scene>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+
+    startBtn.addEventListener("click", async () => {
+      startBtn.style.display = "none";
+
+      const scene = document.querySelector("a-scene");
+      const video = document.getElementById("videoFile");
+      const anchor = document.querySelector("[mindar-image-target]");
+
+      try {
+        await scene.components["mindar-image"].start();
+        console.log("AR started!");
+      } catch (err) {
+        alert("Camera access denied or not available: " + err);
+        console.error(err);
+      }
+
+      anchor.addEventListener("targetFound", () => {
+        video.play().catch(e => console.log("Autoplay blocked:", e));
+      });
+
+      anchor.addEventListener("targetLost", () => {
+        video.pause();
+      });
+    });
+  </script>
+
+</body>
+</html>
