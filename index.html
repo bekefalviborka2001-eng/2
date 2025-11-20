@@ -37,7 +37,7 @@
 
     <a-entity camera></a-entity>
 
-    <!-- Anchor for target -->
+    <!-- Anchor -->
     <a-entity mindar-image-target="targetIndex: 0">
 
       <!-- Video plane -->
@@ -52,19 +52,20 @@
 
     </a-entity>
 
-    <!-- Hidden video element -->
-    <video 
-      id="videoFile"
-      src="assets/animation.mp4"
-      loop="true"
-      crossorigin="anonymous"
-      playsinline
-      webkit-playsinline
-      preload="auto"
-      style="display:none">
-    </video>
-
   </a-scene>
+
+  <!-- Hidden Video -->
+  <video 
+    id="videoFile"
+    src="assets/animation.mp4"
+    loop="true"
+    muted="true"
+    crossorigin="anonymous"
+    playsinline
+    webkit-playsinline
+    preload="auto"
+    style="display:none">
+  </video>
 
   <script>
     const startBtn = document.getElementById("startBtn");
@@ -78,7 +79,6 @@
 
       try {
         await scene.components["mindar-image"].start();
-        console.log("AR started!");
       } catch (err) {
         alert("Camera access denied or not available: " + err);
         console.error(err);
